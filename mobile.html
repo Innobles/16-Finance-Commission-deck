@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldForce 16th FC Progress Tracker — Mobile Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --axis: #97144D;
+            --axis-light: #c41d6b;
+            --axis-glow: rgba(151, 20, 77, .12);
+            --blue: #1D4ED8;
+            --blue-light: #3B82F6;
+            --blue-glow: rgba(29, 78, 216, .1);
+            --green: #059669;
+            --green-light: #10B981;
+            --green-bg: rgba(5, 150, 105, .08);
+            --amber: #D97706;
+            --amber-bg: rgba(217, 119, 6, .08);
+            --red: #DC2626;
+            --gold: #F59E0B;
+            --bg: #F0F2F5;
+            --white: #fff;
+            --text: #0F172A;
+            --text-sec: #64748B;
+            --text-light: #94A3B8;
+            --border: #E2E8F0;
+            --font: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            background: #1A1A2E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--text);
+            overflow: hidden
+        }
+
+        /* ====== PHONE FRAME ====== */
+        .phone-frame {
+            width: 380px;
+            height: 780px;
+            border-radius: 44px;
+            background: #111;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, .5), inset 0 0 0 3px #333, 0 0 0 8px #222;
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.7);
+            transform-origin: center center;
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 32px;
+            background: #111;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px
+        }
+
+        .phone-notch::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #222;
+            border: 2px solid #333
+        }
+
+        .phone-notch::after {
+            content: '';
+            width: 50px;
+            height: 4px;
+            border-radius: 2px;
+            background: #222
+        }
+
+        .phone-status {
+            position: absolute;
+            top: 6px;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 24px;
+            font-size: .6rem;
+            font-weight: 600;
+            color: #fff
+        }
+
+        .phone-home {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, .2);
+            z-index: 100
+        }
+
+        /* ====== SCREENS ====== */
+        .screen {
+            position: absolute;
+            inset: 0;
+            border-radius: 44px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: transform .4s cubic-bezier(.4, 0, .2, 1), opacity .4s;
+            transform: translateX(100%);
+            opacity: 0
+        }
+
+        .screen.active {
+            transform: translateX(0);
+            opacity: 1
+        }
+
+        .screen.exit-left {
+            transform: translateX(-30%);
+            opacity: 0
+        }
+
+        .screen::-webkit-scrollbar {
+            display: none
+        }
+
+        /* ====== SCREEN 1: LOGIN ====== */
+        .login-screen {
+            background: linear-gradient(160deg, #fff 0%, #fdf2f8 50%, #f0f2f5 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 70px 28px 40px
+        }
+
+        .login-logos {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 8px
+        }
+
+        .login-logo-ab {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--axis);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 900;
+            font-size: .9rem;
+            letter-spacing: -0.5px
+        }
+
+        .login-logo-gov {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem
+        }
+
+        .login-x {
+            font-size: .7rem;
+            color: var(--text-light);
+            font-weight: 600
+        }
+
+        .login-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-align: center;
+            margin: 14px 0 4px;
+            color: var(--text)
+        }
+
+        .login-sub {
+            font-size: .72rem;
+            color: var(--text-sec);
+            text-align: center;
+            margin-bottom: 28px;
+            line-height: 1.5
+        }
+
+        .login-field {
+            width: 100%;
+            margin-bottom: 14px
+        }
+
+        .login-field label {
+            font-size: .7rem;
+            font-weight: 600;
+            color: var(--text-sec);
+            display: block;
+            margin-bottom: 6px
+        }
+
+        .login-field input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            font-size: .9rem;
+            font-family: var(--font);
+            background: var(--white);
+            color: var(--text);
+            outline: none;
+            transition: border .2s
+        }
+
+        .login-field input:focus {
+            border-color: var(--axis)
+        }
+
+        .login-field input::placeholder {
+            color: var(--text-light)
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            margin: 18px 0;
+            color: var(--text-light);
+            font-size: .68rem
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border)
+        }
+
+        .login-methods {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .login-method {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 2px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .login-method:hover {
+            border-color: var(--axis);
+            background: var(--axis-glow)
+        }
+
+        .login-method-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem
+        }
+
+        .login-method-text {
+            flex: 1
+        }
+
+        .login-method-text strong {
+            font-size: .82rem;
+            display: block;
+            margin-bottom: 1px
+        }
+
+        .login-method-text span {
+            font-size: .65rem;
+            color: var(--text-sec)
+        }
+
+        .login-method-arrow {
+            color: var(--text-light);
+            font-size: .7rem
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: var(--axis);
+            color: #fff;
+            font-family: var(--font);
+            font-size: .92rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px
+        }
+
+        .login-btn:hover {
+            background: var(--axis-light)
+        }
+
+        .login-footer {
+            margin-top: auto;
+            font-size: .58rem;
+            color: var(--text-light);
+            text-align: center;
+            line-height: 1.6;
+            padding-top: 16px
+        }
+
+        /* ====== SCREEN 2: DASHBOARD ====== */
+        .dash-screen {
+            background: var(--bg)
+        }
+
+        .dash-header {
+            background: var(--axis);
+            padding: 52px 20px 18px;
+            border-radius: 0 0 24px 24px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .dash-header::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .06)
+        }
+
+        .dash-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .04)
+        }
+
+        .dash-welcome {
+            color: rgba(255, 255, 255, .7);
+            font-size: .72rem;
+            font-weight: 500
+        }
+
+        .dash-name {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 14px
+        }
+
+        .dash-gps {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, .12);
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 12px;
+            padding: 10px 14px
+        }
+
+        .dash-gps-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, .2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green-light);
+            font-size: .85rem
+        }
+
+        .dash-gps-text {
+            flex: 1;
+            color: #fff;
+            font-size: .75rem;
+            font-weight: 600
+        }
+
+        .dash-gps-text span {
+            display: block;
+            font-size: .62rem;
+            color: rgba(255, 255, 255, .6);
+            font-weight: 400;
+            margin-top: 1px
+        }
+
+        .dash-gps-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, .2);
+            color: var(--green-light);
+            font-size: .6rem;
+            font-weight: 700
+        }
+
+        .dash-body {
+            padding: 16px 18px 24px
+        }
+
+        .dash-section-title {
+            font-size: .75rem;
+            font-weight: 700;
+            color: var(--text-sec);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .dash-section-title i {
+            font-size: .6rem
+        }
+
+        /* STATS ROW */
+        .dash-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 18px
+        }
+
+        .dash-stat {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border)
+        }
+
+        .dash-stat-val {
+            font-size: 1.2rem;
+            font-weight: 800
+        }
+
+        .dash-stat-label {
+            font-size: .58rem;
+            color: var(--text-sec);
+            margin-top: 2px
+        }
+
+        /* PROJECT CARDS */
+        .project-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all .2s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .project-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .08)
+        }
+
+        .project-card.nearby {
+            border-left: 4px solid var(--green)
+        }
+
+        .project-card.far {
+            opacity: .45;
+            border-left: 4px solid var(--border);
+            pointer-events: none
+        }
+
+        .project-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px
+        }
+
+        .project-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .85rem
+        }
+
+        .project-card-title {
+            font-size: .82rem;
+            font-weight: 700
+        }
+
+        .project-card-id {
+            font-size: .6rem;
+            color: var(--text-sec)
+        }
+
+        .project-card-distance {
+            margin-left: auto;
+            font-size: .6rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 8px
+        }
+
+        .project-progress {
+            margin-top: 8px
+        }
+
+        .project-progress-bar {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            overflow: hidden
+        }
+
+        .project-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .8s ease
+        }
+
+        .project-progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4px;
+            font-size: .6rem;
+            color: var(--text-sec)
+        }
+
+        /* SYNC STATUS */
+        .sync-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: var(--amber-bg);
+            border: 1px solid rgba(217, 119, 6, .15);
+            margin-bottom: 16px
+        }
+
+        .sync-bar i {
+            color: var(--amber);
+            font-size: .75rem
+        }
+
+        .sync-bar span {
+            font-size: .7rem;
+            color: var(--amber);
+            font-weight: 500
+        }
+
+        /* ====== SCREEN 3: MILESTONES ====== */
+        .mile-screen {
+            background: var(--bg)
+        }
+
+        .mile-header {
+            background: var(--white);
+            padding: 52px 18px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .mile-back {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-sec);
+            cursor: pointer;
+            border: 1px solid var(--border);
+            font-size: .8rem
+        }
+
+        .mile-header-text h2 {
+            font-size: .92rem;
+            font-weight: 700
+        }
+
+        .mile-header-text span {
+            font-size: .65rem;
+            color: var(--text-sec)
+        }
+
+        .mile-body {
+            padding: 18px
+        }
+
+        .mile-info {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border)
+        }
+
+        .mile-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: .75rem;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .mile-info-row:last-child {
+            border: none
+        }
+
+        .mile-info-row .label {
+            color: var(--text-sec)
+        }
+
+        .mile-info-row .value {
+            font-weight: 600
+        }
+
+        /* MILESTONE TIMELINE */
+        .mile-timeline {
+            padding: 0 4px
+        }
+
+        .mile-step {
+            display: flex;
+            gap: 14px;
+            position: relative;
+            padding-bottom: 8px
+        }
+
+        .mile-step:last-child {
+            padding-bottom: 0
+        }
+
+        .mile-step::before {
+            content: '';
+            position: absolute;
+            left: 17px;
+            top: 36px;
+            bottom: 0;
+            width: 2px;
+            background: var(--border)
+        }
+
+        .mile-step:last-child::before {
+            display: none
+        }
+
+        .mile-step.done::before {
+            background: var(--green)
+        }
+
+        .mile-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .75rem;
+            flex-shrink: 0;
+            z-index: 1;
+            border: 2px solid var(--border);
+            background: var(--white)
+        }
+
+        .mile-step.done .mile-dot {
+            background: var(--green-bg);
+            border-color: var(--green);
+            color: var(--green)
+        }
+
+        .mile-step.current .mile-dot {
+            background: var(--amber-bg);
+            border-color: var(--amber);
+            color: var(--amber);
+            animation: pulse-dot 2s ease infinite
+        }
+
+        .mile-step.locked .mile-dot {
+            background: var(--bg);
+            border-color: var(--border);
+            color: var(--text-light)
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, .3)
+            }
+
+            50% {
+                box-shadow: 0 0 0 8px rgba(217, 119, 6, 0)
+            }
+        }
+
+        .mile-step-card {
+            flex: 1;
+            background: var(--white);
+            border-radius: 14px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            transition: all .2s
+        }
+
+        .mile-step.current .mile-step-card {
+            border-color: var(--amber);
+            background: var(--amber-bg)
+        }
+
+        .mile-step-title {
+            font-size: .82rem;
+            font-weight: 700;
+            margin-bottom: 2px
+        }
+
+        .mile-step-status {
+            font-size: .65rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 8px
+        }
+
+        .mile-step-desc {
+            font-size: .68rem;
+            color: var(--text-sec);
+            margin-top: 4px
+        }
+
+        .mile-step-btn {
+            margin-top: 8px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: var(--axis);
+            color: #fff;
+            font-family: var(--font);
+            font-size: .78rem;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all .2s
+        }
+
+        .mile-step-btn:hover {
+            background: var(--axis-light)
+        }
+
+        /* ====== SCREEN 4: CAMERA ====== */
+        .cam-screen {
+            background: #000;
+            display: flex;
+            flex-direction: column
+        }
+
+        .cam-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: 52px 18px 12px;
+            background: linear-gradient(rgba(0, 0, 0, .7), transparent)
+        }
+
+        .cam-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .cam-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            font-size: .8rem;
+            border: none
+        }
+
+        .cam-mode {
+            font-size: .72rem;
+            color: #fff;
+            font-weight: 600
+        }
+
+        .cam-flash {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: .8rem;
+            border: none
+        }
+
+        /* Camera Viewfinder */
+        .cam-view {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden
+        }
+
+        .cam-view img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0
+        }
+
+        .cam-overlay {
+            position: absolute;
+            inset: 16px;
+            border: 2px solid rgba(255, 255, 255, .25);
+            border-radius: 14px;
+            pointer-events: none
+        }
+
+        .cam-corners {
+            position: absolute;
+            inset: 14px
+        }
+
+        .cam-corner {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-color: var(--green-light);
+            border-style: solid;
+            border-width: 0
+        }
+
+        .cam-corner.tl {
+            top: 0;
+            left: 0;
+            border-top-width: 3px;
+            border-left-width: 3px;
+            border-radius: 4px 0 0 0
+        }
+
+        .cam-corner.tr {
+            top: 0;
+            right: 0;
+            border-top-width: 3px;
+            border-right-width: 3px;
+            border-radius: 0 4px 0 0
+        }
+
+        .cam-corner.bl {
+            bottom: 0;
+            left: 0;
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+            border-radius: 0 0 0 4px
+        }
+
+        .cam-corner.br {
+            bottom: 0;
+            right: 0;
+            border-bottom-width: 3px;
+            border-right-width: 3px;
+            border-radius: 0 0 4px 0
+        }
+
+        /* Digital Stamp Overlay */
+        .cam-stamp {
+            position: absolute;
+            bottom: 20px;
+            left: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            z-index: 5
+        }
+
+        .cam-stamp-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: .68rem;
+            color: rgba(255, 255, 255, .85)
+        }
+
+        .cam-stamp-row:last-child {
+            margin: 0
+        }
+
+        .cam-stamp-row i {
+            width: 14px;
+            color: var(--green-light);
+            font-size: .6rem
+        }
+
+        .cam-stamp-row .label {
+            color: rgba(255, 255, 255, .5);
+            min-width: 60px
+        }
+
+        .cam-stamp-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, .2);
+            color: var(--green-light);
+            font-size: .55rem;
+            font-weight: 600;
+            margin-left: auto
+        }
+
+        /* Camera Bottom */
+        .cam-bottom {
+            padding: 14px 18px 36px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, .9));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10
+        }
+
+        .cam-gallery-disabled {
+            font-size: .6rem;
+            color: rgba(255, 255, 255, .4);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 4px
+        }
+
+        .cam-gallery-disabled i {
+            font-size: .5rem
+        }
+
+        .cam-shutter {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .15s;
+            position: relative
+        }
+
+        .cam-shutter::after {
+            content: '';
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #fff;
+            transition: all .15s
+        }
+
+        .cam-shutter:hover::after {
+            background: var(--axis-light)
+        }
+
+        .cam-shutter:active {
+            transform: scale(.92)
+        }
+
+        .cam-shutter:active::after {
+            background: var(--axis)
+        }
+
+        .cam-shutter-label {
+            font-size: .68rem;
+            color: rgba(255, 255, 255, .7);
+            font-weight: 600;
+            text-align: center
+        }
+
+        .cam-voice {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .15);
+            color: rgba(255, 255, 255, .7);
+            font-size: .65rem;
+            cursor: pointer
+        }
+
+        /* ====== SCREEN 5: SUBMISSION ====== */
+        .submit-screen {
+            background: var(--bg);
+            display: flex;
+            flex-direction: column
+        }
+
+        .submit-header {
+            background: var(--white);
+            padding: 52px 18px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .submit-body {
+            flex: 1;
+            padding: 18px;
+            overflow-y: auto
+        }
+
+        .submit-photo {
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            position: relative;
+            border: 2px solid var(--border)
+        }
+
+        .submit-photo img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block
+        }
+
+        .submit-photo-stamp {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px 14px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, .8));
+            color: #fff;
+            font-size: .62rem;
+            line-height: 1.6
+        }
+
+        .submit-details {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border)
+        }
+
+        .submit-details-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: .75rem;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .submit-details-row:last-child {
+            border: none
+        }
+
+        .submit-details-row .label {
+            color: var(--text-sec)
+        }
+
+        .submit-details-row .value {
+            font-weight: 600
+        }
+
+        .submit-checks {
+            background: var(--green-bg);
+            border: 1px solid rgba(5, 150, 105, .2);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 18px
+        }
+
+        .submit-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .72rem;
+            color: var(--green);
+            padding: 3px 0
+        }
+
+        .submit-check i {
+            font-size: .65rem
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: var(--axis);
+            color: #fff;
+            font-family: var(--font);
+            font-size: .92rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all .2s;
+            margin-bottom: 10px
+        }
+
+        .submit-btn:hover {
+            background: var(--axis-light)
+        }
+
+        .submit-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed
+        }
+
+        .submit-disclaimer {
+            font-size: .58rem;
+            color: var(--text-light);
+            text-align: center;
+            line-height: 1.5
+        }
+
+        /* ====== SUCCESS OVERLAY ====== */
+        .success-overlay {
+            position: absolute;
+            inset: 0;
+            background: var(--white);
+            z-index: 200;
+            border-radius: 44px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 28px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all .4s
+        }
+
+        .success-overlay.show {
+            opacity: 1;
+            visibility: visible
+        }
+
+        .success-check {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--green-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--green);
+            margin-bottom: 20px;
+            animation: successPop .5s cubic-bezier(.175, .885, .32, 1.275)
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(0)
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .success-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 6px
+        }
+
+        .success-steps {
+            width: 100%;
+            margin-top: 20px
+        }
+
+        .success-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all .4s ease
+        }
+
+        .success-step.show {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .success-step-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .6rem;
+            flex-shrink: 0
+        }
+
+        .success-step-dot.green {
+            background: var(--green-bg);
+            color: var(--green)
+        }
+
+        .success-step-dot.blue {
+            background: var(--blue-glow);
+            color: var(--blue)
+        }
+
+        .success-step-dot.gold {
+            background: rgba(245, 158, 11, .1);
+            color: var(--gold)
+        }
+
+        .success-step-text {
+            font-size: .78rem;
+            color: var(--text)
+        }
+
+        .success-step-text strong {
+            display: block;
+            font-size: .8rem
+        }
+
+        .success-step-text span {
+            color: var(--text-sec);
+            font-size: .65rem
+        }
+
+        .success-back {
+            margin-top: 24px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            background: var(--axis);
+            color: #fff;
+            border: none;
+            font-family: var(--font);
+            font-size: .85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 12px 28px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            z-index: 50;
+            border-radius: 0 0 44px 44px
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: .55rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 4px 8px
+        }
+
+        .bottom-nav-item.active {
+            color: var(--axis)
+        }
+
+        .bottom-nav-item i {
+            font-size: 1rem
+        }
+
+        /* BACK LINK */
+        .back-to-pres {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .08);
+            color: rgba(255, 255, 255, .5);
+            font-size: .72rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font);
+            border: 1px solid rgba(255, 255, 255, .1);
+            transition: all .2s
+        }
+
+        .back-to-pres:hover {
+            background: rgba(255, 255, 255, .15);
+            color: #fff
+        }
+
+        /* LABEL */
+        .proto-label {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 18px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .5);
+            font-size: .68rem;
+            font-family: var(--font);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 10
+        }
+
+        .proto-label i {
+            font-size: .55rem
+        }
+
+        /* SCREEN TITLES on side */
+        .screen-nav {
+            position: fixed;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 10
+        }
+
+        .screen-nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .15);
+            cursor: pointer;
+            transition: all .2s;
+            border: none
+        }
+
+        .screen-nav-dot.active {
+            background: var(--axis-light);
+            width: 8px;
+            height: 20px;
+            border-radius: 4px
+        }
+
+        .screen-nav-dot:hover {
+            background: rgba(255, 255, 255, .3)
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="proto-label"><i class="fas fa-mobile-screen"></i> FieldForce 16th FC — Mobile Prototype</div>
+
+    <!-- SCREEN NAV DOTS -->
+    <div class="screen-nav">
+        <button class="screen-nav-dot active" onclick="goScreen(0)"></button>
+        <button class="screen-nav-dot" onclick="goScreen(1)"></button>
+        <button class="screen-nav-dot" onclick="goScreen(2)"></button>
+        <button class="screen-nav-dot" onclick="goScreen(3)"></button>
+        <button class="screen-nav-dot" onclick="goScreen(4)"></button>
+    </div>
+
+    <!-- PHONE -->
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-status">
+            <span>12:15</span>
+            <span><i class="fas fa-signal" style="margin-right:4px"></i><i class="fas fa-wifi"
+                    style="margin-right:4px"></i><i class="fas fa-battery-three-quarters"></i></span>
+        </div>
+        <div class="phone-home"></div>
+
+        <!-- ====== SCREEN 1: LOGIN ====== -->
+        <div class="screen login-screen active" id="screen0">
+            <div class="login-logos">
+                <div class="login-logo-ab">AB</div>
+                <span class="login-x">×</span>
+                <div class="login-logo-gov"><i class="fas fa-landmark"></i></div>
+            </div>
+            <div class="login-title">FieldForce</div>
+            <div style="font-size:.65rem;color:var(--axis);font-weight:700;letter-spacing:1px;margin-bottom:4px">16th
+                FINANCE COMMISSION</div>
+            <div class="login-sub">Performance-Linked Progress Tracker<br>by Axis Bank × Sketch</div>
+
+            <div class="login-field">
+                <label>MOBILE NUMBER / EMPLOYEE ID</label>
+                <input type="text" placeholder="Enter 10-digit mobile number" value="9876543210">
+            </div>
+
+            <div class="login-divider">Verify your identity</div>
+
+            <div class="login-methods">
+                <div class="login-method" onclick="goScreen(1)">
+                    <div class="login-method-icon" style="background:var(--green-bg);color:var(--green)"><i
+                            class="fas fa-fingerprint"></i></div>
+                    <div class="login-method-text">
+                        <strong>Biometric Verification</strong>
+                        <span>Fingerprint or Face ID</span>
+                    </div>
+                    <i class="fas fa-chevron-right login-method-arrow"></i>
+                </div>
+                <div class="login-method" onclick="goScreen(1)">
+                    <div class="login-method-icon" style="background:var(--blue-glow);color:var(--blue)"><i
+                            class="fas fa-message"></i></div>
+                    <div class="login-method-text">
+                        <strong>Login with OTP</strong>
+                        <span>SMS verification code</span>
+                    </div>
+                    <i class="fas fa-chevron-right login-method-arrow"></i>
+                </div>
+            </div>
+
+            <button class="login-btn" onclick="goScreen(1)"><i class="fas fa-shield-halved"></i> Secure Login</button>
+
+            <div class="login-footer">Secured by Axis Bank · End-to-end encrypted<br>Powered by Sketch Technology</div>
+        </div>
+
+        <!-- ====== SCREEN 2: DASHBOARD ====== -->
+        <div class="screen dash-screen" id="screen1">
+            <div class="dash-header">
+                <div class="dash-welcome">Welcome back,</div>
+                <div class="dash-name">Ramesh Kumar <span style="font-size:.65rem;font-weight:500;opacity:.7">(Junior
+                        Engineer)</span></div>
+                <div class="dash-gps">
+                    <div class="dash-gps-icon"><i class="fas fa-location-crosshairs"></i></div>
+                    <div class="dash-gps-text">
+                        GPS Status: Location Locked ✅
+                        <span>Inside Faridabad Block · Updated 2s ago</span>
+                    </div>
+                    <div class="dash-gps-badge">LIVE</div>
+                </div>
+            </div>
+            <div class="dash-body">
+                <div class="sync-bar">
+                    <i class="fas fa-cloud-arrow-up"></i>
+                    <span>2 reports pending upload · Will sync when online</span>
+                </div>
+
+                <div class="dash-stats">
+                    <div class="dash-stat">
+                        <div class="dash-stat-val" style="color:var(--blue)">5</div>
+                        <div class="dash-stat-label">Assigned</div>
+                    </div>
+                    <div class="dash-stat">
+                        <div class="dash-stat-val" style="color:var(--amber)">2</div>
+                        <div class="dash-stat-label">Pending</div>
+                    </div>
+                    <div class="dash-stat">
+                        <div class="dash-stat-val" style="color:var(--green)">3</div>
+                        <div class="dash-stat-label">Completed</div>
+                    </div>
+                </div>
+
+                <div class="dash-section-title"><i class="fas fa-location-dot"></i> Nearby Active Projects</div>
+
+                <div class="project-card nearby" onclick="goScreen(2)">
+                    <div class="project-card-header">
+                        <div class="project-card-icon" style="background:var(--blue-glow);color:var(--blue)"><i
+                                class="fas fa-building"></i></div>
+                        <div>
+                            <div class="project-card-title">Community Hall Construction</div>
+                            <div class="project-card-id">FC16-HAR-001 · Sector 42, Faridabad</div>
+                        </div>
+                        <div class="project-card-distance" style="background:var(--green-bg);color:var(--green)">120m
+                        </div>
+                    </div>
+                    <div class="project-progress">
+                        <div class="project-progress-bar">
+                            <div class="project-progress-fill" style="width:20%;background:var(--amber)"></div>
+                        </div>
+                        <div class="project-progress-label"><span>Stage 2 of 5 · Foundation</span><span
+                                style="font-weight:600">20%</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card nearby" onclick="goScreen(2)">
+                    <div class="project-card-header">
+                        <div class="project-card-icon" style="background:var(--axis-glow);color:var(--axis)"><i
+                                class="fas fa-solar-panel"></i></div>
+                        <div>
+                            <div class="project-card-title">Smart Street Light Installation</div>
+                            <div class="project-card-id">FC16-HAR-004 · Colony Rd, Faridabad</div>
+                        </div>
+                        <div class="project-card-distance" style="background:var(--green-bg);color:var(--green)">340m
+                        </div>
+                    </div>
+                    <div class="project-progress">
+                        <div class="project-progress-bar">
+                            <div class="project-progress-fill" style="width:60%;background:var(--green)"></div>
+                        </div>
+                        <div class="project-progress-label"><span>Stage 3 of 5 · Wiring</span><span
+                                style="font-weight:600">60%</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card far">
+                    <div class="project-card-header">
+                        <div class="project-card-icon" style="background:var(--bg);color:var(--text-light)"><i
+                                class="fas fa-road"></i></div>
+                        <div>
+                            <div class="project-card-title" style="color:var(--text-light)">Village Road Widening</div>
+                            <div class="project-card-id">FC16-HAR-009 · NH44 Bypass</div>
+                        </div>
+                        <div class="project-card-distance" style="background:var(--bg);color:var(--text-light)">2.3 km
+                        </div>
+                    </div>
+                    <div class="project-progress">
+                        <div class="project-progress-bar">
+                            <div class="project-progress-fill" style="width:45%;background:var(--border)"></div>
+                        </div>
+                        <div class="project-progress-label"><span style="color:var(--text-light)">Outside geo-fence
+                                range</span><span style="color:var(--text-light)">—</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div class="bottom-nav-item active"><i class="fas fa-house"></i>Home</div>
+                <div class="bottom-nav-item"><i class="fas fa-list-check"></i>Tasks</div>
+                <div class="bottom-nav-item"><i class="fas fa-camera" style="font-size:1.4rem;color:var(--axis)"></i>
+                </div>
+                <div class="bottom-nav-item"><i class="fas fa-bell"></i>Alerts</div>
+                <div class="bottom-nav-item"><i class="fas fa-user"></i>Profile</div>
+            </div>
+        </div>
+
+        <!-- ====== SCREEN 3: MILESTONES ====== -->
+        <div class="screen mile-screen" id="screen2">
+            <div class="mile-header">
+                <div class="mile-back" onclick="goScreen(1)"><i class="fas fa-arrow-left"></i></div>
+                <div class="mile-header-text">
+                    <h2>Community Hall Construction</h2>
+                    <span>FC16-HAR-001 · Sector 42, Faridabad</span>
+                </div>
+            </div>
+            <div class="mile-body">
+                <div class="mile-info">
+                    <div class="mile-info-row"><span class="label">Sanctioned Cost</span><span
+                            class="value">₹12,00,000</span></div>
+                    <div class="mile-info-row"><span class="label">Agency</span><span class="value">Gram
+                            Panchayat</span></div>
+                    <div class="mile-info-row"><span class="label">Started</span><span class="value">15 Jan 2026</span>
+                    </div>
+                    <div class="mile-info-row"><span class="label">Target</span><span class="value">30 Jun 2026</span>
+                    </div>
+                </div>
+
+                <div class="dash-section-title" style="margin-bottom:14px"><i class="fas fa-flag"></i> Work Milestones
+                </div>
+
+                <div class="mile-timeline">
+                    <!-- DONE -->
+                    <div class="mile-step done">
+                        <div class="mile-dot"><i class="fas fa-check"></i></div>
+                        <div class="mile-step-card">
+                            <div class="mile-step-title">Stage 1: Site Clearance</div>
+                            <div class="mile-step-status" style="background:var(--green-bg);color:var(--green)"><i
+                                    class="fas fa-check-circle"></i> Completed</div>
+                            <div class="mile-step-desc">Land cleared, boundary marked. Verified on 20 Jan 2026.</div>
+                        </div>
+                    </div>
+                    <!-- CURRENT -->
+                    <div class="mile-step current">
+                        <div class="mile-dot"><i class="fas fa-exclamation"></i></div>
+                        <div class="mile-step-card">
+                            <div class="mile-step-title">Stage 2: Foundation</div>
+                            <div class="mile-step-status" style="background:var(--amber-bg);color:var(--amber)"><i
+                                    class="fas fa-clock"></i> Pending Upload ⚠️</div>
+                            <div class="mile-step-desc">Foundation trench dug, rebar placed. Photo evidence required.
+                            </div>
+                            <button class="mile-step-btn" onclick="goScreen(3)"><i class="fas fa-camera"></i> Upload
+                                Progress Photo</button>
+                        </div>
+                    </div>
+                    <!-- LOCKED -->
+                    <div class="mile-step locked">
+                        <div class="mile-dot"><i class="fas fa-lock"></i></div>
+                        <div class="mile-step-card" style="opacity:.5">
+                            <div class="mile-step-title">Stage 3: Walling</div>
+                            <div class="mile-step-status" style="background:var(--bg);color:var(--text-light)"><i
+                                    class="fas fa-lock"></i> Locked</div>
+                            <div class="mile-step-desc">Unlocks after Stage 2 approval & payment.</div>
+                        </div>
+                    </div>
+                    <div class="mile-step locked">
+                        <div class="mile-dot"><i class="fas fa-lock"></i></div>
+                        <div class="mile-step-card" style="opacity:.5">
+                            <div class="mile-step-title">Stage 4: Roofing</div>
+                            <div class="mile-step-status" style="background:var(--bg);color:var(--text-light)"><i
+                                    class="fas fa-lock"></i> Locked</div>
+                        </div>
+                    </div>
+                    <div class="mile-step locked">
+                        <div class="mile-dot"><i class="fas fa-lock"></i></div>
+                        <div class="mile-step-card" style="opacity:.5">
+                            <div class="mile-step-title">Stage 5: Finishing</div>
+                            <div class="mile-step-status" style="background:var(--bg);color:var(--text-light)"><i
+                                    class="fas fa-lock"></i> Locked</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== SCREEN 4: CAMERA ====== -->
+        <div class="screen cam-screen" id="screen3">
+            <div class="cam-top">
+                <div class="cam-top-bar">
+                    <button class="cam-close" onclick="goScreen(2)"><i class="fas fa-arrow-left"></i></button>
+                    <div class="cam-mode"><i class="fas fa-shield-halved" style="margin-right:4px"></i> Forced Geo-Tag
+                        Mode</div>
+                    <button class="cam-flash"><i class="fas fa-bolt"></i></button>
+                </div>
+            </div>
+            <div class="cam-view">
+                <img src="camera-bg.png" alt="Camera viewfinder">
+                <div class="cam-overlay"></div>
+                <div class="cam-corners">
+                    <div class="cam-corner tl"></div>
+                    <div class="cam-corner tr"></div>
+                    <div class="cam-corner bl"></div>
+                    <div class="cam-corner br"></div>
+                </div>
+                <div class="cam-stamp">
+                    <div class="cam-stamp-row"><i class="fas fa-hashtag"></i><span
+                            class="label">Project</span><strong>FC16-HAR-001</strong><span class="cam-stamp-verified"><i
+                                class="fas fa-check"></i> Verified</span></div>
+                    <div class="cam-stamp-row"><i class="fas fa-clock"></i><span
+                            class="label">Time</span><strong>2026-03-05 11:15 AM IST</strong></div>
+                    <div class="cam-stamp-row"><i class="fas fa-location-dot"></i><span
+                            class="label">GPS</span><strong>28.40° N, 77.31° E (Faridabad)</strong></div>
+                    <div class="cam-stamp-row"><i class="fas fa-ruler"></i><span
+                            class="label">Accuracy</span><strong>±8m</strong></div>
+                </div>
+            </div>
+            <div class="cam-bottom">
+                <div class="cam-gallery-disabled"><i class="fas fa-ban"></i> Gallery upload disabled — Camera only</div>
+                <div class="cam-shutter" onclick="goScreen(4)"></div>
+                <div class="cam-shutter-label">Take Forced Geo-Tagged Photo</div>
+                <div class="cam-voice"><i class="fas fa-microphone"></i> Hold to record work description (Optional)
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== SCREEN 5: SUBMISSION ====== -->
+        <div class="screen submit-screen" id="screen4">
+            <div class="submit-header">
+                <div class="mile-back" onclick="goScreen(3)"><i class="fas fa-arrow-left"></i></div>
+                <div class="mile-header-text">
+                    <h2>Review & Submit</h2>
+                    <span>Stage 2: Foundation · FC16-HAR-001</span>
+                </div>
+            </div>
+            <div class="submit-body">
+                <div class="submit-photo">
+                    <img src="camera-bg.png" alt="Captured photo">
+                    <div class="submit-photo-stamp">
+                        <i class="fas fa-shield-halved" style="color:var(--green-light);margin-right:4px"></i>
+                        FC16-HAR-001 · 2026-03-05 11:15 AM · 28.40°N, 77.31°E · ±8m accuracy
+                    </div>
+                </div>
+
+                <div class="submit-details">
+                    <div class="submit-details-row"><span class="label">Project</span><span class="value">Community
+                            Hall</span></div>
+                    <div class="submit-details-row"><span class="label">Stage</span><span class="value">Stage 2 —
+                            Foundation</span></div>
+                    <div class="submit-details-row"><span class="label">Submitted by</span><span class="value">Ramesh
+                            Kumar (JE)</span></div>
+                    <div class="submit-details-row"><span class="label">Photos</span><span class="value">1
+                            captured</span></div>
+                </div>
+
+                <div class="submit-checks">
+                    <div class="submit-check"><i class="fas fa-check-circle"></i> GPS coordinates locked & verified
+                    </div>
+                    <div class="submit-check"><i class="fas fa-check-circle"></i> Photo captured via in-app camera</div>
+                    <div class="submit-check"><i class="fas fa-check-circle"></i> Timestamp embedded — tamper-proof
+                    </div>
+                    <div class="submit-check"><i class="fas fa-check-circle"></i> Inside project geo-fence (120m)</div>
+                </div>
+
+                <button class="submit-btn" onclick="submitProgress()" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Progress to Block / Nodal Dept.
+                </button>
+                <div class="submit-disclaimer">By submitting, you confirm that this evidence is authentic and captured
+                    on-site. False submissions are subject to audit.</div>
+            </div>
+        </div>
+
+        <!-- ====== SUCCESS OVERLAY ====== -->
+        <div class="success-overlay" id="successOverlay">
+            <div class="success-check"><i class="fas fa-check"></i></div>
+            <div class="success-title">Upload Complete!</div>
+            <div style="font-size:.78rem;color:var(--text-sec);text-align:center">Your progress report has been
+                submitted successfully</div>
+
+            <div class="success-steps">
+                <div class="success-step" id="sStep1">
+                    <div class="success-step-dot green"><i class="fas fa-cloud-arrow-up"></i></div>
+                    <div class="success-step-text"><strong>Evidence Uploaded</strong><span>Photo + metadata synced to
+                            Sketch Cloud</span></div>
+                </div>
+                <div class="success-step" id="sStep2">
+                    <div class="success-step-dot blue"><i class="fas fa-brain"></i></div>
+                    <div class="success-step-text"><strong>AI Verifying Geo-Tags...</strong><span>GPS, timestamp & photo
+                            authenticity check</span></div>
+                </div>
+                <div class="success-step" id="sStep3">
+                    <div class="success-step-dot green"><i class="fas fa-flag-checkered"></i></div>
+                    <div class="success-step-text"><strong>Stage 2 Marked as Complete</strong><span>Foundation milestone
+                            recorded</span></div>
+                </div>
+                <div class="success-step" id="sStep4">
+                    <div class="success-step-dot gold"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <div class="success-step-text"><strong>Payment Voucher Queued</strong><span>Sent to Nodal Officer
+                            for approval & DSC signing</span></div>
+                </div>
+            </div>
+
+            <button class="success-back" onclick="resetApp()"><i class="fas fa-house"></i> Back to Dashboard</button>
+        </div>
+    </div>
+
+    <a href="index.html" class="back-to-pres"><i class="fas fa-arrow-left"></i> Back to Presentation</a>
+
+    <script>
+        let currentScreen = 0;
+
+        function goScreen(idx) {
+            const screens = document.querySelectorAll('.screen');
+            const dots = document.querySelectorAll('.screen-nav-dot');
+
+            screens[currentScreen].classList.remove('active');
+            screens[currentScreen].classList.add('exit-left');
+
+            setTimeout(() => {
+                screens[currentScreen].classList.remove('exit-left');
+                currentScreen = idx;
+                screens[idx].classList.add('active');
+                dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+            }, 100);
+        }
+
+        function submitProgress() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+
+            setTimeout(() => {
+                document.getElementById('successOverlay').classList.add('show');
+                const steps = ['sStep1', 'sStep2', 'sStep3', 'sStep4'];
+                steps.forEach((id, i) => {
+                    setTimeout(() => document.getElementById(id).classList.add('show'), (i + 1) * 700);
+                });
+            }, 1200);
+        }
+
+        function resetApp() {
+            document.getElementById('successOverlay').classList.remove('show');
+            ['sStep1', 'sStep2', 'sStep3', 'sStep4'].forEach(id => document.getElementById(id).classList.remove('show'));
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Progress to Block / Nodal Dept.';
+            goScreen(1);
+        }
+
+        // Keyboard nav
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' && currentScreen < 4) goScreen(currentScreen + 1);
+            if (e.key === 'ArrowLeft' && currentScreen > 0) goScreen(currentScreen - 1);
+        });
+    </script>
+</body>
+
+</html>
